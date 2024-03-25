@@ -8,8 +8,16 @@ class ImageController:
     def __init__(self, db_file):
         self.model = ImageDataModel(db_file)
         self.docker_client = docker.from_env()
-        
+
     def get_kubernetes_clusters(self):
+        try:
+            config.load_kube_config()
+            contexts, _ = config.list_kube_config_contexts()
+            cluster_names = [context["context"]["cluster"] for context in contexts]
+            return cluster_names
+        except Exception as e:
+            print("Error:", e)
+            return []
 
     def is_from_dockerhub(self, image):
 
