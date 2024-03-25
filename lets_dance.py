@@ -1,13 +1,15 @@
-from src.mvc.controller import ImageController
-from src.mvc.view import ImageRegistryManager
+from src.disko.image_controller import ImageController
+from src.disko.image_view import ImageRegistryManager
+from src.disko.image_model import ImageDataModel
 
 # main function
 def main():
     # Database file path
     db_file = 'image_data.db'
 
-    # Initialize controller and GUI objects
-    controller = ImageController(db_file)
+    # Initialize model, controller, and GUI objects
+    model = ImageDataModel(ImageController, db_file)
+    controller = model.controller
     gui = ImageRegistryManager(db_file, controller)
 
     # Run GUI

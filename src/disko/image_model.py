@@ -1,11 +1,9 @@
-# model.py
 from src.disko.sqlite import SQLiteCRUD
-from src.mvc.controller import ImageController
 
 class ImageDataModel:
-    def __init__(self, db_file):
+    def __init__(self, image_controller, db_file):
         self.db = SQLiteCRUD(db_file)
-        self.controller = ImageController(db_file)
+        self.controller = image_controller
 
     def insert_images_with_amount(self, table_name):
         images = self.db.select_column(table_name, 'image_name')
@@ -17,4 +15,3 @@ class ImageDataModel:
         cluster_names = self.controller.get_kubernetes_clusters()
         for cluster_name in cluster_names:
             self.db.insert_data('clusters', (cluster_name,))
-

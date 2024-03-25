@@ -1,12 +1,11 @@
-# controller.py
 from kubernetes import config
-from model import ImageDataModel
 import docker
-
+import hashlib
 
 class ImageController:
-    def __init__(self, db_file):
-        self.model = ImageDataModel(db_file)
+    def __init__(self, image_model, db_file):
+        self.model = image_model(db_file)
+        self.db_file = db_file
         self.docker_client = docker.from_env()
 
     def get_kubernetes_clusters(self):
@@ -42,7 +41,6 @@ class ImageController:
         total_images = sum(amounts.values())
         percentages = [(registry, amount, (amount / total_images) * 100) for registry, amount in amounts.items()]
         return percentages
-
 
     def transfer_image(self, image, new_registry, tag, username, password):
         self.docker_client.login(username=username, password=password)

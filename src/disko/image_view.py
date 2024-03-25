@@ -2,11 +2,11 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import time
-from src.mvc.controller import ImageController
 
 class ImageRegistryManager:
-    def __init__(self, db_file):
-        self.controller = ImageController(db_file)
+    def __init__(self, db_file, controller):
+        self.db_file = db_file
+        self.controller = controller
         self.root = tk.Tk()
         self.root.title("Image Registry Manager")
         self.root.style = ttk.Style()
