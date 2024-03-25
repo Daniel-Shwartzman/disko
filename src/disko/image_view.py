@@ -6,6 +6,22 @@ from src.mvc.controller import ImageController
 
 class ImageRegistryManager:
     def __init__(self, db_file):
+        self.controller = ImageController(db_file)
+        self.root = tk.Tk()
+        self.root.title("Image Registry Manager")
+        self.root.style = ttk.Style()
+        self.root.style.theme_use('clam')
+        self.columns = ['Registry Name', 'Number of Images', 'Percentage']
+        self.treeview = None
+        self.checkboxes = {col: tk.BooleanVar(value=True) for col in self.columns}
+        self.selected_cluster = None
+        self.pull_username = None
+        self.pull_password = None
+        self.push_username = None
+        self.push_password = None
+        self.listbox = None
+        self.push_tag = None
+        self.selected_images = []
         
 
     def display_image_data(self, table_name):
