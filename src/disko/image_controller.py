@@ -30,10 +30,26 @@ class ImageController:
         return False
 
     def calculate_amount_per_registry(self, images):
+        amount = {}
+        for image_tuple in images:
+            registry = image_tuple[2]
+            amount[registry] = amount.get(registry, 0) + 1
+        return amount
 
     def calculate_percentages(self, table_name):
 
     def transfer_image(self, image, new_registry, tag, username, password):
+        self.docker_client.login(username=username, password=password)
+        pulled_image = self.docker_client.images.pull(image)
+        if pulled_image:
+            print(f"Image {image} pulled successfully")
+        new_image_tag = f"{new_registry}:{tag}"
+        pulled_image.tag(new_image_tag)
+        push = self.docker_client.images.push(new_image_tag)
+        if push:
+            print(f"Image {image} pushed to {new_registry}")
+        else:
+            print(f"Failed to push image {image} to {new_registry}")
 
     def copy_images(self, images, new_registry, tag, username, password):
 
