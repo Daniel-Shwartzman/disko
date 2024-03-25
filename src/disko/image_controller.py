@@ -20,6 +20,14 @@ class ImageController:
             return []
 
     def is_from_dockerhub(self, image):
+        parts = image.split('/')
+        if len(parts) == 1:
+            return True
+        if '.' not in parts[0] and ':' not in parts[0]:
+            return True
+        if 'docker.io' in parts[0]:
+            return True
+        return False
 
     def calculate_amount_per_registry(self, images):
 
