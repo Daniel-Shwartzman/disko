@@ -127,7 +127,58 @@ class ImageRegistryManager:
             messagebox.showerror("Error", "Please select Docker images.")
     
     def registry_input_screen(self, selected_images):
+        registry_input_window = tk.Toplevel(self.root)
+        registry_input_window.title("Registry Input")
+        
+        pull_label = ttk.Label(registry_input_window, text="Pulling Registry:")
+        pull_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        pull_username_label = ttk.Label(registry_input_window, text="Username:")
+        pull_username_label.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+        pull_username_entry = ttk.Entry(registry_input_window)
+        pull_username_entry.grid(row=1, column=1, padx=5, pady=5)
+        pull_password_label = ttk.Label(registry_input_window, text="Password:")
+        pull_password_label.grid(row=2, column=0, padx=5, pady=5, sticky="w")
+        pull_password_entry = ttk.Entry(registry_input_window, show="*")
+        pull_password_entry.grid(row=2, column=1, padx=5, pady=5)
+        
+        push_url_label = ttk.Label(registry_input_window, text="Pushing Registry URL:")
+        push_url_label.grid(row=3, column=0, padx=5, pady=5, sticky="w")
+        push_url_entry = ttk.Entry(registry_input_window)
+        push_url_entry.grid(row=3, column=1, padx=5, pady=5)
+        
+        push_username_label = ttk.Label(registry_input_window, text="Username:")
+        push_username_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
+        push_username_entry = ttk.Entry(registry_input_window)
+        push_username_entry.grid(row=4, column=1, padx=5, pady=5)
+        
+        push_password_label = ttk.Label(registry_input_window, text="Password:")
+        push_password_label.grid(row=5, column=0, padx=5, pady=5, sticky="w")
+        push_password_entry = ttk.Entry(registry_input_window, show="*")
+        push_password_entry.grid(row=5, column=1, padx=5, pady=5)
+
+        push_tag_label = ttk.Label(registry_input_window, text="tag:")
+        push_tag_label.grid(row=6, column=0, padx=5, pady=5, sticky="w")
+        push_tag_entry = ttk.Entry(registry_input_window)
+        push_tag_entry.grid(row=6, column=1, padx=5, pady=5)
+        
+        submit_button = ttk.Button(registry_input_window, text="Submit", command=lambda: self.submit_registry_details(
+            pull_username_entry.get(), pull_password_entry.get(), push_username_entry.get(), push_password_entry.get(),
+            push_url_entry.get(), push_tag_entry.get(), selected_images, registry_input_window))
+        submit_button.grid(row=7, column=0, columnspan=2, pady=10)
 
     def submit_registry_details(self, pull_username, pull_password, push_username, push_password, push_url, push_tag, selected_images, window):
+        self.pull_username = pull_username
+        self.pull_password = pull_password
+        self.push_username = push_username
+        self.push_password = push_password
+        self.push_url = push_url
+        self.push_tag = push_tag
+        self.selected_images = selected_images
+        self.controller.copy_images(self.selected_images, self.push_url, self.push_tag, self.push_username, self.push_password)
+        
+        window.destroy()
+
+        time.sleep(20)
+        self.root.destroy()
 
     def run(self):
