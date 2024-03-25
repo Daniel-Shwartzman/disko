@@ -37,6 +37,12 @@ class ImageController:
         return amount
 
     def calculate_percentages(self, table_name):
+        image_data = self.model.db.select_all(table_name)
+        amounts = self.calculate_amount_per_registry(image_data)
+        total_images = sum(amounts.values())
+        percentages = [(registry, amount, (amount / total_images) * 100) for registry, amount in amounts.items()]
+        return percentages
+
 
     def transfer_image(self, image, new_registry, tag, username, password):
         self.docker_client.login(username=username, password=password)
@@ -52,5 +58,13 @@ class ImageController:
             print(f"Failed to push image {image} to {new_registry}")
 
     def copy_images(self, images, new_registry, tag, username, password):
+        for image_tuple in images:
+            image = image_tuple[0]
+            image_name, image_tag = image.split(":")
+            self.transfer_image(image_name, new_registry, tag, username, password)
+            self.export_sha256(image_name, image_tag)
 
     def export_sha256(self, image_name, image_tag):
+        sha256_hash = hashlib.sha256(f"{image_name}:{image_tag}".encode()).hexdigest()
+        with open("sha256_hashes.txt", "a") as file:
+            file.write(f"{image_name}:{image_tag} - SHA256: {sha256_hash}\n")
