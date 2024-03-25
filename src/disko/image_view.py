@@ -25,10 +25,41 @@ class ImageRegistryManager:
         
 
     def display_image_data(self, table_name):
+        for row in self.treeview.get_children():
+            self.treeview.delete(row)
+
+        image_data = self.controller.model.db.select_all(table_name)
+
+        registry_amount = self.controller.calculate_amount_per_registry(image_data)
+        percentages = self.controller.calculate_percentages(table_name)
+
+        for registry, num_images in registry_amount.items():
+            percentage = next((p[2] for p in percentages if p[0] == registry), 0)
+            self.treeview.insert('', 'end', values=(registry, num_images, f"{percentage:.0f}%"))
 
     def cluster_selection(self, clusters):
+        cluster_selection_window = tk.Toplevel(self.root)
+        cluster_selection_window.title("Cluster Selection")
+        cluster_selection_window.lift()
+        cluster_selection_window.focus_force()
+
+        label = ttk.Label(cluster_selection_window, text="Please select a cluster:")
+        label.pack()
+        cluster_var = tk.StringVar()
+        cluster_combobox = ttk.Combobox(cluster_selection_window, textvariable=cluster_var, values=clusters)
+        cluster_combobox.pack()
+
+        confirm_button = ttk.Button(cluster_selection_window, text="Confirm", command=lambda: self.confirm_cluster_selection(cluster_var.get(), cluster_selection_window))
+        confirm_button.pack()
 
     def confirm_cluster_selection(self, selected_cluster, cluster_selection_window):
+        if selected_cluster:
+            cluster_selection_window.destroy()
+            self.controller.model.db.create_table(selected_cluster)
+            self.display_image_data(selected_cluster)
+            self.selected_cluster = selected_cluster
+        else:
+            messagebox.showerror("Error", "Please select a cluster.")
 
     def create_images_table_screen(self):
 
