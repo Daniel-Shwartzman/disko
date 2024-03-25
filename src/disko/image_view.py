@@ -62,6 +62,28 @@ class ImageRegistryManager:
             messagebox.showerror("Error", "Please select a cluster.")
 
     def create_images_table_screen(self):
+        images_table_window = tk.Toplevel(self.root)
+        images_table_window.title("Images Table")
+
+        frame = ttk.Frame(images_table_window, style='DarkFrame.TFrame')
+        frame.pack(padx=20, pady=20)
+
+        self.treeview = ttk.Treeview(frame, columns=['Image', 'TimeStamp'], show='headings', style='Custom.Treeview')
+        self.treeview.heading('Image', text='Image')
+        self.treeview.heading('TimeStamp', text='TimeStamp')
+        self.treeview.pack(side='left', fill='both', expand=True)
+
+        scrollbar = ttk.Scrollbar(frame, orient='vertical', command=self.treeview.yview)
+        scrollbar.pack(side='right', fill='y')
+        self.treeview.configure(yscrollcommand=scrollbar.set)
+
+        if self.selected_cluster:
+            image_data = self.controller.model.db.select_all(self.selected_cluster)
+
+            for image in image_data:
+                self.treeview.insert('', 'end', values=(image[0], image[1]))
+        else:
+            messagebox.showerror("Error", "No cluster selected.")
 
     def update_columns(self):
     
