@@ -1,11 +1,14 @@
 # controller.py
 from kubernetes import config
 from model import ImageDataModel
+import docker
+
 
 class ImageController:
     def __init__(self, db_file):
         self.model = ImageDataModel(db_file)
-
+        self.docker_client = docker.from_env()
+        
     def get_kubernetes_clusters(self):
 
     def is_from_dockerhub(self, image):
