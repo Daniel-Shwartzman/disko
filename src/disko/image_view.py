@@ -95,8 +95,36 @@ class ImageRegistryManager:
         
     
     def select_docker_images(self):
+        image_names = self.controller.model.db.select_all(self.selected_cluster)
+
+        window_width = 700
+        window_height = 300
+
+        select_images_window = tk.Toplevel(self.root)
+        select_images_window.title("Select Docker Images")
+        select_images_window.geometry(f"{window_width}x{window_height}")
+
+        label = ttk.Label(select_images_window, text="Please select Docker images:")
+        label.pack()
+
+        max_text_width = max(len(name) for name in image_names)
+        listbox_width = min(max_text_width * 10, 300)
+
+        self.listbox = tk.Listbox(select_images_window, selectmode=tk.MULTIPLE, width=listbox_width)
+        for name in image_names:
+            self.listbox.insert(tk.END, name)
+        self.listbox.pack(expand=True, fill='both')
+
+        confirm_button = ttk.Button(select_images_window, text="Confirm", command=lambda: self.confirm_image_selection(self.listbox.curselection(), select_images_window))
+        confirm_button.pack()
 
     def confirm_image_selection(self, selected_indices, select_images_window):
+        if selected_indices:
+            selected_images = [self.listbox.get(index) for index in selected_indices]
+            self.registry_input_screen(selected_images)
+            select_images_window.destroy()
+        else:
+            messagebox.showerror("Error", "Please select Docker images.")
     
     def registry_input_screen(self, selected_images):
 
