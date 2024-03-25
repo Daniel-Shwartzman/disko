@@ -86,6 +86,13 @@ class ImageRegistryManager:
             messagebox.showerror("Error", "No cluster selected.")
 
     def update_columns(self):
+        selected_columns = [column.get() for column in self.checkboxes.values()]
+        for col in self.columns:
+            if col in selected_columns:
+                self.treeview.column(col, display=True)
+            else:
+                self.treeview.column(col, display=False)
+        
     
     def select_docker_images(self):
 
